@@ -7,15 +7,15 @@ We run our flow on a 1 minute interval schedule and observe that the output of
 `return_random_number` only changes every other run, due to output caching.
 """
 import datetime
-import random
 
 from prefect import Flow, task
 from prefect.schedules import IntervalSchedule
+import secrets
 
 
 @task(cache_for=datetime.timedelta(minutes=1, seconds=30))
 def return_random_number():
-    return random.random()
+    return secrets.SystemRandom().random()
 
 
 @task
