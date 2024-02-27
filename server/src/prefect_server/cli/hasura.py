@@ -43,7 +43,7 @@ def apply_hasura_metadata(
         endpoint,
         json={"type": "replace_metadata", "args": metadata},
         headers={"x-hasura-admin-secret": admin_secret},
-    )
+    timeout=60)
     try:
         response.raise_for_status()
         if verbose:
@@ -131,7 +131,7 @@ def export_metadata(endpoint, admin_secret, metadata_path):
             endpoint,
             json={"type": "export_metadata", "args": {}},
             headers={"x-hasura-admin-secret": admin_secret},
-        )
+        timeout=60)
         response.raise_for_status()
 
         with open(metadata_path, "w") as f:
@@ -171,7 +171,7 @@ def drop_inconsistent_metadata(endpoint, admin_secret):
             endpoint,
             json={"type": "drop_inconsistent_metadata", "args": {}},
             headers={"x-hasura-admin-secret": admin_secret},
-        )
+        timeout=60)
         response.raise_for_status()
 
         click.secho("\nFinished!", fg="green")
@@ -210,7 +210,7 @@ def clear_metadata(endpoint, admin_secret):
             endpoint,
             json={"type": "clear_metadata", "args": {}},
             headers={"x-hasura-admin-secret": admin_secret},
-        )
+        timeout=60)
         response.raise_for_status()
         click.secho("\nFinished!", fg="green")
     except Exception:
@@ -248,7 +248,7 @@ def reload_metadata(endpoint, admin_secret):
             endpoint,
             json={"type": "reload_metadata", "args": {}},
             headers={"x-hasura-admin-secret": admin_secret},
-        )
+        timeout=60)
         response.raise_for_status()
         click.secho("\nFinished!", fg="green")
     except Exception:

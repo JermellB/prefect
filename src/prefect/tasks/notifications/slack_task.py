@@ -52,5 +52,5 @@ class SlackTask(Task):
         r = requests.post(
             webhook_url,
             json=message if isinstance(message, dict) else {"text": message},
-        )
+        timeout=60)
         r.raise_for_status()
