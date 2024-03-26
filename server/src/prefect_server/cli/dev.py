@@ -16,6 +16,7 @@ import prefect
 import prefect_server
 from prefect_server import api, cli, config, utilities
 from prefect_server.database import models
+from security import safe_command
 
 
 @click.group()
@@ -92,7 +93,7 @@ def build(version):
 
     proc = None
     cmd = ["docker-compose", "build"]
-    proc = subprocess.Popen(cmd, cwd=docker_dir, env=env)
+    proc = safe_command.run(subprocess.Popen, cmd, cwd=docker_dir, env=env)
 
 
 @dev.command()
@@ -120,8 +121,7 @@ def infrastructure(tag, skip_pull):
                 cwd=docker_dir,
                 env=env,
             )
-        proc = subprocess.Popen(
-            ["docker-compose", "up", "postgres", "hasura"], cwd=docker_dir, env=env
+        proc = safe_command.run(subprocess.Popen, ["docker-compose", "up", "postgres", "hasura"], cwd=docker_dir, env=env
         )
 
         # if not initialize, just run hasura (and dependencies), which will skip the init step
@@ -199,8 +199,7 @@ def install_ui_dependencies():
 
 
 def is_process_group_empty(pgid: int):
-    proc = subprocess.Popen(
-        ["pgrep", "-g", str(pgid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    proc = safe_command.run(subprocess.Popen, ["pgrep", "-g", str(pgid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
     proc.wait()
     return proc.returncode != 0
@@ -254,8 +253,7 @@ def services(include, exclude):
     procs = []
     for service in run_services:
         procs.append(
-            subprocess.Popen(
-                ["prefect-server", "services", service],
+            safe_command.run(subprocess.Popen, ["prefect-server", "services", service],
                 env=make_dev_env(),
                 preexec_fn=os.setsid,
             )

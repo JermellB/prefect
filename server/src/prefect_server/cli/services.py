@@ -12,6 +12,7 @@ import click
 
 import prefect_server
 from prefect_server import config
+from security import safe_command
 
 root_dir = Path(prefect_server.__file__).parents[2]
 services_dir = root_dir / "src" / "prefect_server" / "services"
@@ -40,8 +41,7 @@ def graphql():
     Start the Python GraphQL server
     """
     run_proc_forever(
-        subprocess.Popen(
-            ["python", services_dir / "graphql" / "server.py"],
+        safe_command.run(subprocess.Popen, ["python", services_dir / "graphql" / "server.py"],
             env=dict(os.environ, SERVER_VERSION="development"),
         )
     )
@@ -65,8 +65,7 @@ def ui():
         )
 
     run_proc_forever(
-        subprocess.Popen(
-            ["npm", "run", "serve"],
+        safe_command.run(subprocess.Popen, ["npm", "run", "serve"],
             cwd=ui_path,
             env=dict(
                 os.environ,
@@ -83,7 +82,7 @@ def scheduler():
     Start the scheduler service
     """
     run_proc_forever(
-        subprocess.Popen(["python", services_dir / "scheduler" / "scheduler.py"])
+        safe_command.run(subprocess.Popen, ["python", services_dir / "scheduler" / "scheduler.py"])
     )
 
 
@@ -93,8 +92,7 @@ def apollo():
     Start the Apollo GraphQL server
     """
     run_proc_forever(
-        subprocess.Popen(
-            ["npm", "run", "start"],
+        safe_command.run(subprocess.Popen, ["npm", "run", "start"],
             cwd=root_dir / "services" / "apollo",
             env=dict(
                 os.environ,

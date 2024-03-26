@@ -9,6 +9,7 @@ from prefect.agent import Agent
 from prefect.environments.storage import GCS, S3, Azure, Local, GitHub
 from prefect.serialization.storage import StorageSchema
 from prefect.utilities.graphql import GraphQLResult
+from security import safe_command
 
 
 class LocalAgent(Agent):
@@ -154,8 +155,7 @@ class LocalAgent(Agent):
         # dictate the lifecycle of the flow run. However, if the user has elected to
         # show flow logs, these log entries will continue to stream to the users terminal
         # until these child processes exit, even if the agent has already exited.
-        p = Popen(
-            ["prefect", "execute", "cloud-flow"],
+        p = safe_command.run(Popen, ["prefect", "execute", "cloud-flow"],
             stdout=stdout,
             stderr=STDOUT,
             env=current_env,
