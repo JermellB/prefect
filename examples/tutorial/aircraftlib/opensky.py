@@ -7,9 +7,8 @@ import struct
 import binascii
 from typing import Any, List, Dict
 
-import requests
-
 from .position import Area
+from security import safe_requests
 
 
 # OpenSky API states/all reference
@@ -54,8 +53,7 @@ AIRCRAFT_VECTOR_FIELDS = (
 
 
 def _api_request_json(req: str, options: Dict[str, Any] = None) -> Dict[str, Any]:
-    response = requests.get(
-        "https://opensky-network.org/api/{}".format(req),
+    response = safe_requests.get("https://opensky-network.org/api/{}".format(req),
         auth=(),
         params=options or {},
         timeout=10.00,
