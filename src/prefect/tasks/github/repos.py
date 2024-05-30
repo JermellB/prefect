@@ -65,7 +65,7 @@ class GetRepoInfo(Task):
         }
 
         # send the request
-        resp = requests.get(url, headers=headers)
+        resp = requests.get(url, headers=headers, timeout=60)
         resp.raise_for_status()
         data = resp.json()
 
@@ -148,7 +148,7 @@ class CreateBranch(Task):
         }
 
         # gather branch information
-        resp = requests.get(url + "/heads", headers=headers)
+        resp = requests.get(url + "/heads", headers=headers, timeout=60)
         resp.raise_for_status()
         branch_data = resp.json()
 
@@ -163,6 +163,6 @@ class CreateBranch(Task):
 
         # create new branch
         new_branch = {"ref": "refs/heads/{}".format(branch_name), "sha": commit_sha}
-        resp = requests.post(url, headers=headers, json=new_branch)
+        resp = requests.post(url, headers=headers, json=new_branch, timeout=60)
         resp.raise_for_status()
         return resp.json()

@@ -83,5 +83,5 @@ class OpenGitHubIssue(Task):
         issue = {"title": title, "body": body, "labels": labels}
 
         # send the request
-        resp = requests.post(url, data=json.dumps(issue), headers=headers)
+        resp = requests.post(url, data=json.dumps(issue), headers=headers, timeout=60)
         resp.raise_for_status()
