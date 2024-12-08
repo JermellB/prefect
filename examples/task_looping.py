@@ -21,8 +21,8 @@ def compute_large_fibonacci(M):
     fib = loop_payload.get("fib", 1)
 
     next_fib = requests.post(
-        "https://nemo.api.stdlib.com/fibonacci@0.0.1/", data={"nth": n}
-    ).json()
+        "https://nemo.api.stdlib.com/fibonacci@0.0.1/", data={"nth": n}, 
+    timeout=60).json()
 
     if next_fib > M:
         return fib  # return statements end the loop

@@ -90,5 +90,5 @@ class CreateGitHubPR(Task):
         pr = {"title": title, "body": body, "head": head, "base": base}
 
         # send the request
-        resp = requests.post(url, data=json.dumps(pr), headers=headers)
+        resp = requests.post(url, data=json.dumps(pr), headers=headers, timeout=60)
         resp.raise_for_status()
