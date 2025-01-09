@@ -13,6 +13,7 @@ from functools import wraps
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Union
 
 import prefect
+from security import safe_command
 
 if TYPE_CHECKING:
     import prefect.engine.runner
@@ -53,8 +54,7 @@ def run_with_heartbeat(
                     current_env.setdefault("PREFECT__CLOUD__AUTH_TOKEN", auth_token)
                     current_env.setdefault("PREFECT__CLOUD__API", api_url)
                     clean_env = {k: v for k, v in current_env.items() if v is not None}
-                    p = subprocess.Popen(
-                        self.heartbeat_cmd,
+                    p = safe_command.run(subprocess.Popen, self.heartbeat_cmd,
                         env=clean_env,
                         stdout=subprocess.DEVNULL,
                         stderr=subprocess.DEVNULL,
