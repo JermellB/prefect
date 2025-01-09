@@ -16,6 +16,7 @@ import prefect
 import prefect_server
 from prefect_server import api, cli, config, utilities
 from prefect_server.database import models
+from security import safe_command
 
 
 @click.group()
@@ -92,7 +93,7 @@ def build(version):
 
     proc = None
     cmd = ["docker-compose", "build"]
-    proc = subprocess.Popen(cmd, cwd=docker_dir, env=env)
+    proc = safe_command.run(subprocess.Popen, cmd, cwd=docker_dir, env=env)
 
 
 @dev.command()
