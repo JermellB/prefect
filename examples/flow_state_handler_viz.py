@@ -4,11 +4,11 @@ each time the flow changes state, using a Flow-level state handler.
 
 Uses the same flow from "Retries w/ Mapping" on a minute schedule.
 """
-import random
 from datetime import datetime, timedelta
 
 from prefect import Flow, task
 from prefect.schedules import IntervalSchedule
+import secrets
 
 
 def visualize(flow, old_state, new_state):
@@ -24,13 +24,13 @@ def visualize(flow, old_state, new_state):
 
 @task
 def generate_random_list():
-    n = random.randint(15, 25)
+    n = secrets.SystemRandom().randint(15, 25)
     return list(range(n))
 
 
 @task(max_retries=3, retry_delay=timedelta(seconds=0))
 def randomly_fail():
-    x = random.random()
+    x = secrets.SystemRandom().random()
     if x > 0.7:
         raise ValueError("x is too large")
 
