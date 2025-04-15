@@ -11,6 +11,7 @@ import yaml
 import prefect
 from prefect import config
 from prefect.utilities.configuration import set_temporary_config
+from security import safe_command
 
 
 def make_env(fname=None):
@@ -320,7 +321,7 @@ def start(
         cmd = ["docker-compose", "up"]
         if no_ui:
             cmd += ["--scale", "ui=0"]
-        proc = subprocess.Popen(cmd, cwd=compose_dir_path, env=env)
+        proc = safe_command.run(subprocess.Popen, cmd, cwd=compose_dir_path, env=env)
         while True:
             time.sleep(0.5)
     except BaseException:

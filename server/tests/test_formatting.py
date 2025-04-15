@@ -11,6 +11,7 @@ import pytest
 import yaml
 
 from prefect_server.utilities.tests import yaml_sorter
+from security import safe_command
 
 
 def test_python_37():
@@ -24,7 +25,7 @@ def test_black_formatting():
     # make sure we're in the right place
     assert __file__.endswith("/tests/test_formatting.py")
     prefect_dir = os.path.dirname(os.path.dirname(__file__))
-    result = subprocess.call(shlex.split("black --check {}".format(prefect_dir)))
+    result = safe_command.run(subprocess.call, shlex.split("black --check {}".format(prefect_dir)))
     assert result == 0, "Repo did not pass Black formatting!"
 
 
@@ -35,8 +36,7 @@ def test_mypy():
     prefect_dir = os.path.dirname(os.path.dirname(__file__))
     prefect_src_dir = os.path.join(prefect_dir, "src/")
     config_file = os.path.join(prefect_dir, "setup.cfg")
-    result = subprocess.call(
-        shlex.split("mypy --config-file {0} {1}".format(config_file, prefect_src_dir))
+    result = safe_command.run(subprocess.call, shlex.split("mypy --config-file {0} {1}".format(config_file, prefect_src_dir))
     )
     assert result == 0, "Repo did not pass mypy type checks!"
 
