@@ -2,6 +2,7 @@ from typing import Any, List
 
 from prefect import Task
 from prefect.utilities.tasks import defaults_from_attrs
+from security import safe_requests
 
 
 class GetRepoInfo(Task):
@@ -54,10 +55,6 @@ class GetRepoInfo(Task):
         if repo is None:
             raise ValueError("A GitHub repository must be provided.")
 
-        # 'import requests' is expensive time-wise, we should do this just-in-time to keep
-        # the 'import prefect' time low
-        import requests
-
         url = "https://api.github.com/repos/{}".format(repo)
         headers = {
             "AUTHORIZATION": "token {}".format(token),
@@ -65,7 +62,7 @@ class GetRepoInfo(Task):
         }
 
         # send the request
-        resp = requests.get(url, headers=headers)
+        resp = safe_requests.get(url, headers=headers)
         resp.raise_for_status()
         data = resp.json()
 
@@ -148,7 +145,7 @@ class CreateBranch(Task):
         }
 
         # gather branch information
-        resp = requests.get(url + "/heads", headers=headers)
+        resp = safe_requests.get(url + "/heads", headers=headers)
         resp.raise_for_status()
         branch_data = resp.json()
 
