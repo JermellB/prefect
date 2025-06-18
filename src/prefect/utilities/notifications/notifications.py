@@ -303,7 +303,7 @@ def slack_notifier(
     import requests
 
     form_data = slack_message_formatter(tracked_obj, new_state)
-    r = requests.post(webhook_url, json=form_data)
+    r = requests.post(webhook_url, json=form_data, timeout=60)
     if not r.ok:
         raise ValueError("Slack notification for {} failed".format(tracked_obj))
     return new_state
