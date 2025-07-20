@@ -5,6 +5,7 @@ from typing import Any
 
 import prefect
 from prefect.utilities.tasks import defaults_from_attrs
+from security import safe_command
 
 
 class ShellTask(prefect.Task):
@@ -92,8 +93,7 @@ class ShellTask(prefect.Task):
                 tmp.write("\n".encode())
             tmp.write(command.encode())
             tmp.flush()
-            sub_process = Popen(
-                [self.shell, tmp.name], stdout=PIPE, stderr=STDOUT, env=current_env
+            sub_process = safe_command.run(Popen, [self.shell, tmp.name], stdout=PIPE, stderr=STDOUT, env=current_env
             )
             lines = []
             line = None
