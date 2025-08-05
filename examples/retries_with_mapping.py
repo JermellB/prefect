@@ -9,21 +9,21 @@ This flow first generates a list of random length, and them maps over that list 
 downstream tasks that randomly fail.  The takeaway here is that we don't have to know a-priori how many mapped tasks
 will be created prior to execution!  Additionally, each failed mapped task will retry on its own.
 """
-import random
 from datetime import timedelta
 
 from prefect import Flow, task
+import secrets
 
 
 @task
 def generate_random_list():
-    n = random.randint(15, 25)
+    n = secrets.SystemRandom().randint(15, 25)
     return list(range(n))
 
 
 @task(max_retries=3, retry_delay=timedelta(seconds=0))
 def randomly_fail():
-    x = random.random()
+    x = secrets.SystemRandom().random()
     if x > 0.7:
         raise ValueError("x is too large")
 
